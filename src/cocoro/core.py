@@ -21,7 +21,8 @@ class Cocoro():
                           'AppleWebKit/605.1.15 (KHTML, like Gecko) '
                           'Mobile/15E148',
             'Accept-Language': 'ja-jp',
-            'Connection': 'close',
+            'Connection': 'keep-alive',
+            'Proxy-Connection': 'keep-alive',
         }
 
     def read_config(self):
@@ -34,36 +35,53 @@ class Cocoro():
             headers[k] = v
         return headers
 
-    def get_cookie(self):
+    def get_app_secret(self):
+        return urllib.parse.unquote(self.config['appSecret'])
+
+    def get_cookies(self):
+        if 'cookies' in self.config:
+            return self.config['cookies']
         url = self.url_prefix + '/setting/login/'
-        params = '&'.join(
-            f'{k}={v}' for k, v in {
-                'appSecret': self.config['appSecret'],
-                'serviceName': 'iClub'
-            }.items())
+        headers = self.get_headers()
+        params = (
+            ('appSecret', self.get_app_secret()),
+            ('serviceName', 'iClub'),
+        )
         data = '{"terminalAppId":"https:\\/\\/db.cloudlabs.sharp.co.jp'\
             f'\\/clpf\\/key\\/{self.config["terminalAppIdKey"]}"'\
             '}'
-        headers = self.get_headers(**{'Connection': 'keep-alive',
-                                      'Accept-Language': 'ja-jp'})
         response = requests.post(url, headers=headers, params=params,
                                  data=data)
         if response.status_code != 200 or 'JSESSIONID' not in response.cookies:
             raise Exception('Failed to get cookie')
-        return response.cookies['JSESSIONID']
+        self.config['cookies'] = {'JSESSIONID': response.cookies['JSESSIONID']}
+        return self.config['cookies']
 
-    def run(self):
-        pass
+    def get_box(self):
+        if 'box' in self.config:
+            return self.config['box']
+        url = self.url_prefix + '/setting/boxInfo/'
+        headers = self.get_headers()
+        cookies = self.get_cookies()
+        params = (
+            ('appSecret', self.get_app_secret()),
+            ('mode', 'other'),
+        )
+        response = requests.get(url, headers=headers, params=params,
+                                cookies=cookies)
+        if response.status_code != 200:
+            raise Exception('Failed to access')
+        self.config.update(response.json())
 
     def switch(self, on=True):
+        self.get_box()
         url = self.url_prefix + '/control/deviceControl'
-        cookies = {
-            'JSESSIONID': self.get_cookie(),
-        }
+        headers = self.get_headers(**{'Connection': 'close',
+                                      'Proxy-Connection': 'close'})
+        cookies = self.get_cookies()
         params = (
-            ('boxId', 'https://db.cloudlabs.sharp.co.jp/clpf/key/'
-                      f'{self.config["boxIdKey"]}'),
-            ('appSecret', urllib.parse.unquote(self.config['appSecret'])),
+            ('appSecret', self.get_app_secret()),
+            ('boxId', self.config['box'][0]['boxId']),
         )
         if on:
             code1 = '30'
@@ -71,17 +89,16 @@ class Cocoro():
         else:
             code1 = '31'
             code2 = '000300000000000000000000000000000000000000000000000000'
+        echonetData = self.config['box'][0]['echonetData'][0]
         data = '{"controlList":[{"status":[{"valueSingle":{"code":'+code1+'},'\
             '"statusCode":"80","valueType":"valueSingle"},'\
             '{"valueBinary":{"code":"'+code2+'"},'\
             '"statusCode":"F3","valueType":"valueBinary"}'\
             '],'\
-            f'"deviceId":"{self.config["deviceId"]}",'\
-            f'"echonetNode":"{self.config["echonetNode"]}",'\
-            f'"echonetObject":"{self.config["echonetObject"]}'\
+            f'"deviceId":"{echonetData["deviceId"]}",'\
+            f'"echonetNode":"{echonetData["echonetNode"]}",'\
+            f'"echonetObject":"{echonetData["echonetObject"]}'\
             '"}]}'
-        headers = self.get_headers(**{'Connection': 'close',
-                                      'Proxy-Connection': 'close'})
         response = requests.post(url, headers=headers, params=params,
                                  cookies=cookies, data=data)
         if response.status_code != 200:

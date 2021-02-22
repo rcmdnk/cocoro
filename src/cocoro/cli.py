@@ -18,6 +18,9 @@ class CliObject(object):
     def off(self, **kw):
         Cocoro(**kw).off()
 
+    def box(self, **kw):
+        Cocoro(**kw).box()
+
 
 def cli():
     if len(sys.argv) < 2 or sys.argv[1] in ['-h', '--help', 'help']:
