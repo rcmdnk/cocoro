@@ -18,8 +18,35 @@ class CliObject(object):
     def off(self, **kw):
         Cocoro(**kw).off()
 
-    def box(self, **kw):
-        Cocoro(**kw).box()
+    def humi_on(self, **kw):
+        Cocoro(**kw).humi_on()
+
+    def humi_off(self, **kw):
+        Cocoro(**kw).humi_off()
+
+    def mode_auto(self, **kw):
+        Cocoro(**kw).mode_auto()
+
+    def mode_sleep(self, **kw):
+        Cocoro(**kw).mode_sleep()
+
+    def mode_pollen(self, **kw):
+        Cocoro(**kw).mode_pollen()
+
+    def mode_quiet(self, **kw):
+        Cocoro(**kw).mode_quiet()
+
+    def mode_medium(self, **kw):
+        Cocoro(**kw).mode_medium()
+
+    def mode_high(self, **kw):
+        Cocoro(**kw).mode_high()
+
+    def mode_recommendation(self, **kw):
+        Cocoro(**kw).mode_recommendation()
+
+    def mode_effective(self, **kw):
+        Cocoro(**kw).mode_effective()
 
 
 def cli():
