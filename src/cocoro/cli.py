@@ -1,3 +1,4 @@
+import logging
 import fire
 from .__init__ import __version__, __program__
 from .core import Cocoro
@@ -37,4 +38,6 @@ class CliObject:
 
 
 def cli():
+    logging.basicConfig(handlers=[logging.StreamHandler()],
+                        format='[%(levelname)s][%(name)s] %(message)s')
     fire.Fire(CliObject)

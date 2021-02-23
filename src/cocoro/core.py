@@ -1,13 +1,13 @@
 import os
 import json
 import urllib
-from logging import getLogger, NullHandler
+import logging
 import yaml
 import requests
 
 
 class Cocoro():
-    def __init__(self, config_file=None, verbose='info'):
+    def __init__(self, config_file=None, log_level='info'):
         self.config = {}
 
         if config_file is None:
@@ -17,13 +17,13 @@ class Cocoro():
         self.config_file = config_file
         self.read_config()
 
-        self.logger = getLogger(__name__)
-        verbose = self.get_verbose(verbose)
-        if verbose == -1:
-            self.logger.warning(f'Invalid verbose level: {verbose}.')
+        self.logger = logging.getLogger(self.__class__.__name__)
+        log_level = self.get_log_level(log_level)
+        if log_level == -1:
+            self.logger.warning(f'Invalid log_level level: {log_level}.')
         else:
-            self.logger.setLevel(verbose)
-        self.logger.addHandler(NullHandler())
+            self.logger.setLevel(log_level)
+        self.logger.addHandler(logging.NullHandler())
 
         self.url_prefix = 'https://hms.cloudlabs.sharp.co.jp/hems/pfApi/ta'
         self.headers = {
@@ -83,15 +83,18 @@ class Cocoro():
         with open(self.config_file, 'r') as f:
             self.config.update(yaml.safe_load(f))
 
-    def get_verbose(self, verbose):
-        if isinstance(verbose, int):
-            return verbose
-        if verbose.isdigit():
-            return int(verbose)
-        levels = {'notest': 0, 'debug': 10, 'info': 20, 'warn': 30,
-                  'warning': 30, 'error': 40, 'fatal': 50}
-        if verbose in levels:
-            return levels[verbose]
+    @staticmethod
+    def get_log_level(log_level):
+        if isinstance(log_level, int):
+            return log_level
+        if log_level.isdigit():
+            return int(log_level)
+        levels = {'debug': logging.DEBUG,
+                  'info': logging.INFO, 'warn': logging.WARN,
+                  'warning': logging.WARNING, 'error': logging.ERROR,
+                  'fatal': logging.FATAL}
+        if log_level.lower() in levels:
+            return levels[log_level.lower()]
         return -1
 
     def get_headers(self, **kw):
@@ -118,16 +121,19 @@ class Cocoro():
         response = requests.post(url, headers=headers, params=params,
                                  data=data)
         if response.status_code != 200 or 'JSESSIONID' not in response.cookies:
-            raise Exception('Failed to get cookie')
+            self.logger.error('Failed to get cookie')
+            return False
         self.config['cookies'] = {'JSESSIONID': response.cookies['JSESSIONID']}
         return self.config['cookies']
 
     def get_box(self):
         if 'box' in self.config:
-            return
+            return True
         url = self.url_prefix + '/setting/boxInfo/'
         headers = self.get_headers()
         cookies = self.get_cookies()
+        if not cookies:
+            return False
         params = (
             ('appSecret', self.get_app_secret()),
             ('mode', 'other'),
@@ -135,15 +141,21 @@ class Cocoro():
         response = requests.get(url, headers=headers, params=params,
                                 cookies=cookies)
         if response.status_code != 200:
-            raise Exception('Failed to access')
+            self.logger.error('Failed to get box information')
+            return False
         self.config.update(response.json())
+        return True
 
     def device_control(self, system, target):
-        self.get_box()
+        ret = self.get_box()
+        if not ret:
+            return False
         url = self.url_prefix + '/control/deviceControl'
         headers = self.get_headers(**{'Connection': 'close',
                                       'Proxy-Connection': 'close'})
         cookies = self.get_cookies()
+        if not cookies:
+            return False
         params = (
             ('appSecret', self.get_app_secret()),
             ('boxId', self.config['box'][0]['boxId']),
@@ -172,7 +184,12 @@ class Cocoro():
         response = requests.post(url, headers=headers, params=params,
                                  cookies=cookies, data=data)
         if response.status_code != 200:
-            raise Exception('Failed to access')
+            self.logger.error(f'Failed to control: {system} {target}. '
+                              f'Status code: {response.status_code}.')
+            return False
         data = response.json()
         if data['controlList'][0]['errorCode'] is not None:
-            raise Exception(f'Failed: {system} {target}')
+            self.logger.error(f'Failed to control: {system} {target}')
+            return False
+        self.logger.info(f'Succeeded to control: {system} {target}')
+        return True
