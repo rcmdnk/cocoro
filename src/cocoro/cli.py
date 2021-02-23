@@ -12,7 +12,7 @@ class CliObject:
         pass
 
     @staticmethod
-    def run(ret=0):
+    def run(ret=True):
         if ret:
             sys.exit(0)
         else:
