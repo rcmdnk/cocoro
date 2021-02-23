@@ -5,12 +5,11 @@
 
 Tools for COCORO API (SHARP products).
 
-## Install
+## Install and Usage
 
 ### Using pip
 
     $ pip install cocoro
-    $ cocoro <cmd>
 
 ### Using source code
 
@@ -20,7 +19,6 @@ Use poetry to setup the environment.
     $ git clone https://github.com/rcmdnk/cocoro.git
     $ cd cocoro
     $ poetry install
-    $ poetry run cocoro <cmd>
 
 ## Appliances
 
@@ -73,11 +71,17 @@ appSecret: <*************appSecret**********************>
 terminalAppIdKey: <************terminalAppIdKey*************>
 ```
 
-## How to use
+## Usage
+
+If you installed cocoro by `pip`, do:
 
     $ cocoro <cmd>
 
-Available commands are:
+If you installed from source code, go to cocoro directory, then do:
+
+    $ poetry run cocoro <cmd>
+
+Available commands (`<cmd>`) are:
 
 * `on`: Switch on
 * `off`: Switch off
