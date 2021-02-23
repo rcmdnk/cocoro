@@ -1,5 +1,25 @@
 # cocoro
+
+[![PyPI version](https://badge.fury.io/py/cocoro.svg)](https://badge.fury.io/py/cocoro)
+
 Tools for COCORO API (SHARP products).
+
+## Install
+
+### Using pip
+
+    $ pip install cocoro
+    $ cocoro <cmd>
+
+### Using source code
+
+Use poetry to setup the environment.
+
+    $ pip install poetry
+    $ git clone https://github.com/rcmdnk/cocoro.git
+    $ cd cocoro
+    $ poetry install
+    $ poetry run cocoro <cmd>
 
 ## Appliances
 
@@ -51,23 +71,6 @@ Then, make following configuration file as **~/.config/cocoro/config.yml**:
 appSecret: <*************appSecret**********************>
 terminalAppIdKey: <************terminalAppIdKey*************>
 ```
-
-## Install
-
-### Using pip
-
-    $ pip install cocoro
-    $ cocoro <cmd>
-
-### Using source code
-
-Use poetry to setup the environment.
-
-    $ pip install poetry
-    $ git clone https://github.com/rcmdnk/cocoro.git
-    $ cd cocoro
-    $ poetry install
-    $ poetry run cocoro <cmd>
 
 ## How to use
 

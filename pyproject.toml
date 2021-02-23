@@ -10,7 +10,7 @@ license = "Apache-2.0"
 keywords = ['Sharp', 'API']
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.6"
 fire = "^0.4.0"
 requests = "^2.25.1"
 PyYAML = "^5.4.1"

@@ -1,4 +1,3 @@
-import sys
 import fire
 from .__init__ import __version__, __program__
 from .core import Cocoro

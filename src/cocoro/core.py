@@ -130,7 +130,7 @@ class Cocoro():
         data = {
             'controlList': [{
                 'status': [{
-                    'valueBinary':{'code': code2},
+                    'valueBinary': {'code': code2},
                     'statusCode': 'F3',
                     'valueType': 'valueBinary'
                 }],
@@ -154,10 +154,7 @@ class Cocoro():
         data = response.json()
         if data['controlList'][0]['errorCode'] is not None\
                 or data['controlList'][1]['errorCode'] is not None:
-            if on:
-                raise Exception('Failed to operation on')
-            else:
-                raise Exception('Failed to operation off')
+            raise Exception(f'Failed: {system} {target}')
 
     def on(self):
         self.device_control('ope', target='on')

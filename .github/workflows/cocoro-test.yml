@@ -1,0 +1,43 @@
+---
+name: COCORO test
+
+on:
+  push:
+    tags-ignore:
+      - '*'
+  schedule:
+      - cron:  '0 0 * * *'
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python ${{matrix.python-version}}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{matrix.python-version}}
+      - name: Install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry flake8
+      - name: Lint by flake8
+        run: |
+          flake8  . --per-file-ignores="__init__.py:F401"
+      - name: Setup poetry
+        run: |
+          poetry install
+      - name: Setup poetry
+        run: |
+          poetry install
+      - name: Sanity check
+        run: |
+          poetry run cocoro version
+      - name: pytest
+        run: |
+          poetry run pytest -vvv
+
