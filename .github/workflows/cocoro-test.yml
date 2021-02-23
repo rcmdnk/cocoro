@@ -3,6 +3,8 @@ name: COCORO test
 
 on:
   push:
+    branches:
+      - '*'
     tags-ignore:
       - '*'
   schedule:
