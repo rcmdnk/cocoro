@@ -75,24 +75,22 @@ terminalAppIdKey: <************terminalAppIdKey*************>
 
 If you installed cocoro by `pip`, do:
 
-    $ cocoro <cmd>
+    $ cocoro <cmd> [options]
 
 If you installed from source code, go to cocoro directory, then do:
 
-    $ poetry run cocoro <cmd>
+    $ poetry run cocoro <cmd> [options]
 
 Available commands (`<cmd>`) are:
 
-* `on`: Switch on
-* `off`: Switch off
-* `humi_on`: Humidification on
-* `humi_off`: Humidification off
-* `mode_auto`: Set mode: Auto
-* `mode_sleep`: Set mode: Sleep
-* `mode_pollen`: Set mode: Pollen
-* `mode_quiet`: Set mode: Quiet
-* `mode_medium`: Set mode: Medium
-* `mode_high`: Set mode: High
-* `mode_recommendation`: Set mode: Recommendation
-* `mode_effective`: Set mode: Effective
-* `version`: Show version
+* `switch <target>`: Control switch. Available targets: `on`, `off`.
+* `humidification <target>`: Control humidification. Available targets: `on`, `off`.
+* `humi <target>`: Alias of humidification.
+* `mode <target>`: Control mode. Available targets: `auto`, `sleep`, `pollen`,
+                   `quiet`, `medium`, `high`, `recommendation`, `effective`
+* `version`: Show version.
+* `help`: Show help.
+
+Other options:
+
+* `--config_file <file>`: Set configuration file. Default file path is `~/.config/cocoro/config.yml`.

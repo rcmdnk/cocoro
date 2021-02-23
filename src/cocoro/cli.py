@@ -3,63 +3,37 @@ from .__init__ import __version__, __program__
 from .core import Cocoro
 
 
-class CliObject(object):
+class CliObject:
     '''Utilities to use Sharp, COCORO API'''
 
     def __init__(self):
         pass
 
-    def version(self):
+    @staticmethod
+    def version():
         '''Show version'''
         print("%s: %s" % (__program__, __version__))
 
-    def on(self, **kw):
-        '''Switch on'''
-        Cocoro(**kw).on()
+    @staticmethod
+    def switch(*args, **kw):
+        '''Control switch (on/off)'''
+        Cocoro(**kw).device_control('switch', args[0])
 
-    def off(self, **kw):
-        '''Switch off'''
-        Cocoro(**kw).off()
+    @staticmethod
+    def humidification(*args, **kw):
+        '''Control humidification (on/off)'''
+        Cocoro(**kw).device_control('humi', args[0])
 
-    def humi_on(self, **kw):
-        '''Humidification on'''
-        Cocoro(**kw).humi_on()
+    @staticmethod
+    def humi(*args, **kw):
+        '''Control humidification (on/off)'''
+        Cocoro(**kw).device_control('humi', args[0])
 
-    def humi_off(self, **kw):
-        '''Humidification off'''
-        Cocoro(**kw).humi_off()
-
-    def mode_auto(self, **kw):
-        '''Set mode: Auto'''
-        Cocoro(**kw).mode_auto()
-
-    def mode_sleep(self, **kw):
-        '''Set mode: Sleep'''
-        Cocoro(**kw).mode_sleep()
-
-    def mode_pollen(self, **kw):
-        '''Set mode: Pollen'''
-        Cocoro(**kw).mode_pollen()
-
-    def mode_quiet(self, **kw):
-        '''Set mode: Quiet'''
-        Cocoro(**kw).mode_quiet()
-
-    def mode_medium(self, **kw):
-        '''Set mode: Medium'''
-        Cocoro(**kw).mode_medium()
-
-    def mode_high(self, **kw):
-        '''Set mode: High'''
-        Cocoro(**kw).mode_high()
-
-    def mode_recommendation(self, **kw):
-        '''Set mode: Recommendation'''
-        Cocoro(**kw).mode_recommendation()
-
-    def mode_effective(self, **kw):
-        '''Set mode: Effective'''
-        Cocoro(**kw).mode_effective()
+    @staticmethod
+    def mode(*args, **kw):
+        '''Control mode
+        (auto/sleep/pollen/quiet/medium/high/recommendation/effective)'''
+        Cocoro(**kw).device_control('mode', args[0])
 
 
 def cli():
