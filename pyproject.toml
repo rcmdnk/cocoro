@@ -1,8 +1,13 @@
 [tool.poetry]
 name = "cocoro"
 version = "0.1.0"
-description = ""
+description = "Utilities to use Sharp, COCORO API"
 authors = ["rcmdnk <rcmdnk@gmail.com>"]
+repository = "https://github.com/rcmdnk/cocoro"
+homepage = "https://github.com/rcmdnk/cocoro"
+readme = "README.md"
+license = "Apache-2.0"
+keywords = ['Sharp', 'API']
 
 [tool.poetry.dependencies]
 python = "^3.9"
