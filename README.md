@@ -1,6 +1,7 @@
 # cocoro
 
 [![PyPI version](https://badge.fury.io/py/cocoro.svg)](https://badge.fury.io/py/cocoro)
+[![COCORO test](https://github.com/rcmdnk/cocoro/actions/workflows/cocoro-test.yml/badge.svg)](https://github.com/rcmdnk/cocoro/actions/workflows/cocoro-test.yml)
 
 Tools for COCORO API (SHARP products).
 
