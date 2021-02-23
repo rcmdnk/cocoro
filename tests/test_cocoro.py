@@ -7,12 +7,11 @@ from cocoro import Cocoro
 def co():
     return Cocoro(config_file='./tests/data/config.yml')
 
+
 def test_version():
     assert __version__ == '0.1.2'
+
 
 def test_cocoro(co):
     assert co.config['appSecret'] == 'abc%3Ddef'
     assert co.config['terminalAppIdKey'] == 'abcd'
-
-
-
