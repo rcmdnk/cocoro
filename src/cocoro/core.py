@@ -7,7 +7,8 @@ import requests
 
 
 class Cocoro():
-    def __init__(self, config_file=None, log_level='info'):
+    def __init__(self, config_file=None, appSecret=None, terminalAppIdKey=None,
+                 name=None, log_level='info'):
         self.config = {}
 
         if config_file is None:
@@ -16,6 +17,11 @@ class Cocoro():
         config_file = os.path.expanduser(config_file)
         self.config_file = config_file
         self.read_config()
+        if appSecret is not None:
+            self.config['appSecret'] = appSecret
+        if terminalAppIdKey is not None:
+            self.config['terminalAppIdKey'] = terminalAppIdKey
+        self.config['name'] = name
 
         self.logger = logging.getLogger(self.__class__.__name__)
         log_level = self.get_log_level(log_level)
@@ -46,7 +52,7 @@ class Cocoro():
                 'off': (
                     '31',
                     '000300000000000000000000000000000000000000000000000000')},
-            'humi': {
+            'humidification': {
                 'on': (
                     None,
                     '000900000000000000000000000000FF0000000000000000000000'),
@@ -126,6 +132,28 @@ class Cocoro():
         self.config['cookies'] = {'JSESSIONID': response.cookies['JSESSIONID']}
         return self.config['cookies']
 
+    def get_box_par(self):
+        for box in self.config['box']:
+            for echonetData in box['echonetData']:
+                name = echonetData['labelData']['name'].strip('"\'')
+                if (self.config['name'] is None
+                        or name
+                        == self.config['name']):
+                    self.config['boxId'] = box['boxId']
+                    self.config['echonetData'] = echonetData
+                    self.config['name'] = name
+                    return True
+        if self.config['name'] is None:
+            self.logger.error('Could not find any device')
+            return False
+        self.config['boxId'] = self.config['box'][0]['boxId']
+        self.config['echonetData'] = self.config['box'][0]['echonetData'][0]
+        self.logger.warning(
+            f'Could not find device named {self.config["name"]}. '
+            'Use the first device: '
+            f'{self.config["echonetData"]["labelData"]["name"]}.')
+        return True
+
     def get_box(self):
         if 'box' in self.config:
             return True
@@ -144,11 +172,12 @@ class Cocoro():
             self.logger.error('Failed to get box information')
             return False
         self.config.update(response.json())
+        if not self.get_box_par():
+            return False
         return True
 
     def device_control(self, system, target):
-        ret = self.get_box()
-        if not ret:
+        if not self.get_box():
             return False
         url = self.url_prefix + '/control/deviceControl'
         headers = self.get_headers(**{'Connection': 'close',
@@ -158,9 +187,8 @@ class Cocoro():
             return False
         params = (
             ('appSecret', self.get_app_secret()),
-            ('boxId', self.config['box'][0]['boxId']),
+            ('boxId', self.config['boxId']),
         )
-        echonetData = self.config['box'][0]['echonetData'][0]
         data = {
             'controlList': [{
                 'status': [{
@@ -168,9 +196,9 @@ class Cocoro():
                     'statusCode': 'F3',
                     'valueType': 'valueBinary'
                 }],
-                'deviceId': echonetData['deviceId'],
-                'echonetNode': echonetData['echonetNode'],
-                'echonetObject': echonetData['echonetObject']
+                'deviceId': self.config['echonetData']['deviceId'],
+                'echonetNode': self.config['echonetData']['echonetNode'],
+                'echonetObject': self.config['echonetData']['echonetObject']
             }]
         }
         if self.control[system][target][0] is not None:
@@ -184,12 +212,28 @@ class Cocoro():
         response = requests.post(url, headers=headers, params=params,
                                  cookies=cookies, data=data)
         if response.status_code != 200:
-            self.logger.error(f'Failed to control: {system} {target}. '
+            self.logger.error(f'Failed to control {self.config["name"]}: '
+                              f'{system} {target}. '
                               f'Status code: {response.status_code}.')
             return False
         data = response.json()
         if data['controlList'][0]['errorCode'] is not None:
-            self.logger.error(f'Failed to control: {system} {target}')
+            self.logger.error(f'Failed to control: {self.config["name"]} '
+                              f'{system} {target}')
             return False
-        self.logger.info(f'Succeeded to control: {system} {target}')
+        self.logger.info(f'Succeeded to control {self.config["name"]}: '
+                         f'{system} {target}')
         return True
+
+    def devince_info(self, key='labelData'):
+        if not self.get_box():
+            return False
+        self.logger.info('Device information')
+        if key == 'full':
+            return self.config['echonetData']
+        if key in self.config['echonetData'].keys():
+            return self.config['echonetData'][key]
+        if key in self.config['echonetData']['labelData'].keys():
+            return self.config['echonetData']['labelData'][key]
+        self.logger.warning('Invalid key for device_info()')
+        return False

@@ -38,7 +38,7 @@ By using mitmproxy, you will see following `POST` command while you are controll
     POST https://hms.cloudlabs.sharp.co.jp/hems/pfApi/ta/setting/login/?appSecret=XXXXXXXXX…
            ← 200 application/json 38b 308ms
 
-Open this command and you will see:
+Open this command and you will see following in `Request tab:
 
 
     2021-02-21 21:55:40 POST https://hms.cloudlabs.sharp.co.jp/hems/pfApi/ta/setting/login/?app
@@ -85,12 +85,39 @@ Available commands (`<cmd>`) are:
 
 * `switch <target>`: Control switch. Available targets: `on`, `off`.
 * `humidification <target>`: Control humidification. Available targets: `on`, `off`.
-* `humi <target>`: Alias of humidification.
-* `mode <target>`: Control mode. Available targets: `auto`, `sleep`, `pollen`,
-                   `quiet`, `medium`, `high`, `recommendation`, `effective`
-* `version`: Show version.
+* `humi <target>`  : Alias of humidification.
+* `mode <target>`  : Control mode. Available targets: `auto`, `sleep`, `pollen`,
+                     `quiet`, `medium`, `high`, `recommendation`, `effective`
+* `info [key]      : Show the appliance information. The available keys are:
+                     `full`(full echonetData), `labelData`, `maker`, `model`,
+                     `deviceType`, `name`, `place`, `yomi`, `zipCd`
+                     If no key is give, labelData is shown.
+* `version`: Show   version.
 * `help`: Show help.
 
 Other options:
 
 * `--config_file <file>`: Set configuration file. Default file path is `~/.config/cocoro/config.yml`.
+* `--appSecret <appSecret>`: Set appSecret (overwrite the value of config_file).
+* `--terminalAppIdKey <terminalAppIdKey>`: Set terminalAppIdKey (overwrite the value of config_file).
+* `--name <name>`: Set name of the device. If no name is given, the first device is used.
+* `--log_level <level>`: Set log level. The available levels are: `debug`, `info`, `warning` `fatal`.
+
+
+## Examples
+
+    $ poetry run cocoro switch on
+    [INFO][Cocoro] Succeeded to control js50: switch on
+    $ poetry run cocoro humi off
+    [INFO][Cocoro] Succeeded to control js50: humidification off
+    $ poetry run cocoro mode auto
+    [INFO][Cocoro] Succeeded to control js50: mode auto
+
+
+    $ cocoro info
+    [INFO][Cocoro] Device information
+    {'id': 123456, 'place': 'リビング', 'name': 'my js50', 'deviceType': 'AIR_CLEANER', 'zipCd': '7890123', 'yomi': '', 'lSubInfo': '{"room_data":{"size": 10.0, "struct": "prefab", "unit": "tatami"}}'}
+    $ cocoro info model --log_level=warning
+    KIJS50
+    $ cocoro info maker --log_level=warning
+    SHARP
