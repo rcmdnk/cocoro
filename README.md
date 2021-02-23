@@ -47,6 +47,7 @@ Find `appSecret` and `terminalAppIdKey` values from above details.
 Then, make following configuration file as **~/.config/cocoro/config.yml**:
 
 ```yml
+---
 appSecret: <*************appSecret**********************>
 terminalAppIdKey: <************terminalAppIdKey*************>
 ```
