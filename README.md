@@ -40,6 +40,8 @@ By using mitmproxy, you will see following `POST` command while you are controll
 
 Open this command and you will see following in `Request tab:
 
+![pic](https://github.com/rcmdnk/cocoro/blob/main/pic/getcookie.jpg?raw=true)
+
 
     2021-02-21 21:55:40 POST https://hms.cloudlabs.sharp.co.jp/hems/pfApi/ta/setting/login/?app
                              Secret=<*************appSecret**********************>&serviceName=
