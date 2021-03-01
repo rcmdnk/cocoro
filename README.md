@@ -106,11 +106,11 @@ Other options:
 
 ## Examples
 
-    $ poetry run cocoro switch on
+    $ cocoro switch on
     [INFO][Cocoro] Succeeded to control js50: switch on
-    $ poetry run cocoro humi off
+    $ cocoro humi off
     [INFO][Cocoro] Succeeded to control js50: humidification off
-    $ poetry run cocoro mode auto
+    $ cocoro mode auto
     [INFO][Cocoro] Succeeded to control js50: mode auto
 
 
