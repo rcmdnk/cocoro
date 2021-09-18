@@ -90,7 +90,7 @@ Available commands (`<cmd>`) are:
 * `humi <target>`  : Alias of humidification.
 * `mode <target>`  : Control mode. Available targets: `auto`, `sleep`, `pollen`,
                      `quiet`, `medium`, `high`, `recommendation`, `effective`
-* `info [key]      : Show the appliance information. The available keys are:
+* `info [key]`     : Show the appliance information. The available keys are:
                      `full`(full echonetData), `labelData`, `maker`, `model`,
                      `deviceType`, `name`, `place`, `yomi`, `zipCd`
                      If no key is give, labelData is shown.
