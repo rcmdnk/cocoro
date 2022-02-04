@@ -16,7 +16,7 @@ requests = "^2.25.1"
 PyYAML = "^5.4.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2"
+pytest = "^7.0"
 
 [tool.poetry.scripts]
 cocoro = "cocoro:main"
