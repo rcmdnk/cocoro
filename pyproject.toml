@@ -9,7 +9,7 @@ readme = "README.md"
 license = "Apache-2.0"
 keywords = ['Sharp', 'API']
 
-[tool.poetry.dependencies]
+[poetry.group.dev.dependencies]
 python = "^3.10"
 fire = "^0.7.0"
 requests = "^2.25.1"
