@@ -9,13 +9,13 @@ readme = "README.md"
 license = "Apache-2.0"
 keywords = ['Sharp', 'API']
 
-[poetry.group.dev.dependencies]
+[tool.poetry.dependencies]
 python = "^3.10"
 fire = "^0.7.0"
 requests = "^2.25.1"
 PyYAML = "^6.0.0"
 
-[tool.poetry.dev-dependencies]
+[poetry.group.dev.dependencies]
 pytest = "^9.0.0"
 
 [tool.poetry.scripts]
